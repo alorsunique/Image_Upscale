@@ -22,10 +22,10 @@ print(f"Resources Directory: {resources_dir}")
 if not resources_dir.exists():
     os.mkdir(resources_dir)
 
-    input_dir = resources_dir / "Input"
-    output_dir = resources_dir / "Output"
+input_dir = resources_dir / "Input"
+if not input_dir.exists():
+    os.mkdir(input_dir)
 
-    if not input_dir.exists():
-        os.mkdir(input_dir)
-    if not output_dir.exists():
-        os.mkdir(output_dir)
+output_dir = resources_dir / "Output"
+if not output_dir.exists():
+    os.mkdir(output_dir)
