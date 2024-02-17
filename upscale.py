@@ -91,7 +91,7 @@ for entry in to_upscale_list:
     print(f"{count}/{max_count} | Working: {file_dir.name}")
 
     try:
-        input_img = cv2.imread(str(file_dir), cv2.IMREAD_COLOR)
+        input_img = cv2.imread(str(file_dir), cv2.IMREAD_UNCHANGED)
         output_img, _ = upsampler.enhance(input_img)
 
         output_name = output_dir / entry
