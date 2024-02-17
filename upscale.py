@@ -1,40 +1,32 @@
 import os
-import time
 from pathlib import Path
 
 import cv2
 from basicsr.archs.rrdbnet_arch import RRDBNet
 from realesrgan import RealESRGANer
 
-resources_dir_text = "Resources_Path.txt"
-model_dir_text = "Model_Path.txt"
+script_path = Path(__file__).resolve()
+project_dir = script_path.parent
+os.chdir(project_dir)
 
-entry_list = []
-with open(resources_dir_text, 'r') as reader:
-    entry_list.append(reader.read())
-    reader.close()
+with open("Resources_Path.txt", "r") as resources_text:
+    resources_dir = Path(str(resources_text.readline()).replace('"', ''))
 
-resources_dir = Path(entry_list[0])
 input_dir = resources_dir / "Input"
 output_dir = resources_dir / "Output"
 
+with open("Model_Path.txt", "r") as resources_text:
+    model_path = Path(str(resources_text.readline()).replace('"', ''))
+
 print(f"Resources Directory: {resources_dir}")
-
-entry_list = []
-with open(model_dir_text, 'r') as reader:
-    entry_list.append(reader.read())
-    reader.close()
-
-model_dir = Path(entry_list[0])
-
-print(f"Model Directory: {model_dir}")
+print(f"Model Path: {model_path}")
 
 # Importing the model
 
 model = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64, num_block=23, num_grow_ch=32, scale=4)
 upsampler = RealESRGANer(
     scale=4,
-    model_path=str(model_dir),
+    model_path=str(model_path),
     dni_weight=None,
     model=model,
     tile=400,
@@ -83,19 +75,17 @@ to_upscale_list = sorted(list(to_upscale_set))
 count = 0
 max_count = len(to_upscale_list)
 
-time.sleep(2.5)
-
 for entry in to_upscale_list:
     count += 1
-    file_dir = input_dir / entry
-    print(f"{count}/{max_count} | Working: {file_dir.name}")
+    file_path = input_dir / entry
+    print(f"{count}/{max_count} | Working: {file_path.name}")
 
     try:
-        input_img = cv2.imread(str(file_dir), cv2.IMREAD_UNCHANGED)
-        output_img, _ = upsampler.enhance(input_img)
+        input_image = cv2.imread(str(file_path), cv2.IMREAD_UNCHANGED)
+        output_image, _ = upsampler.enhance(input_image)
 
         output_name = output_dir / entry
-        cv2.imwrite(str(output_name), output_img)
+        cv2.imwrite(str(output_name), output_image)
 
     except:
         print(f"File not an image that can be opened")
